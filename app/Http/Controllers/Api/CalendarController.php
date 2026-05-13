@@ -16,6 +16,11 @@ class CalendarController extends Controller
         // Query schedules with related division and auditors
         $query = InviteMail::with(['division', 'auditors']);
 
+        // Optional filtering by division
+        if ($request->has('division_id')) {
+            $query->where('division_id', $request->division_id);
+        }
+
         // Optional filtering by month and year
         if ($request->has('month') && $request->has('year')) {
             $query->whereMonth('masuk', $request->month)
@@ -24,8 +29,25 @@ class CalendarController extends Controller
 
         $schedules = $query->get();
 
+        $today = \Carbon\Carbon::today();
+
         // Format data into standard FullCalendar event structure
-        $events = $schedules->map(function ($schedule) {
+        $events = $schedules->map(function ($schedule) use ($today) {
+            // Determine active event date/time
+            $eventDateTime = $schedule->hari ?: ($schedule->masuk ? \Carbon\Carbon::parse($schedule->masuk) : null);
+            $className = 'event-future'; // default
+
+            if ($eventDateTime) {
+                $eventDate = \Carbon\Carbon::parse($eventDateTime)->startOfDay();
+                if ($eventDate->eq($today)) {
+                    $className = 'event-today';
+                } elseif ($eventDate->lt($today)) {
+                    $className = 'event-past';
+                } else {
+                    $className = 'event-future';
+                }
+            }
+
             return [
                 'id' => $schedule->id,
                 'title' => $schedule->kegiatan,
@@ -37,7 +59,8 @@ class CalendarController extends Controller
                 'division' => $schedule->division ? $schedule->division->name : null,
                 'auditors' => $schedule->auditors->pluck('name'),
                 'status_pelaksanaan' => $schedule->status_pelaksanaan,
-                'allDay' => false
+                'allDay' => false,
+                'className' => $className
             ];
         });
 

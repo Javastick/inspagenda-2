@@ -28,8 +28,26 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Secret Admin Registration Route
 Route::match(['get', 'post'], '/register-admin-secret', [AuthController::class, 'registerAdminSecret']);
 
-// Schedule CRUD Routes
-Route::resource('schedules', ScheduleController::class);
+// Home Route
+Route::get('/home', function () {
+    $todaySchedules = \App\Models\InviteMail::whereDate('hari', \Carbon\Carbon::today())->get();
+    $upcomingSchedules = \App\Models\InviteMail::whereDate('hari', '>', \Carbon\Carbon::today())
+                                               ->whereDate('hari', '<=', \Carbon\Carbon::today()->addDays(2))
+                                               ->get();
+    return view('home', compact('todaySchedules', 'upcomingSchedules'));
+})->name('home');
+
+// Schedule CRUD Routes (Admin Dashboard)
+// Note: index now returns admin.dashboard view
+Route::resource('admin/schedules', ScheduleController::class)->names([
+    'index' => 'schedules.index',
+    'store' => 'schedules.store',
+    'show' => 'schedules.show',
+    'update' => 'schedules.update',
+    'destroy' => 'schedules.destroy',
+]);
+// Alias for /admin/dashboard to schedules.index
+Route::get('/admin/dashboard', [ScheduleController::class, 'index'])->name('admin.dashboard');
 
 // Division Portal Route
-Route::get('/division/{id}', [DivisionPortalController::class, 'show'])->name('division.portal');
+Route::get('/portal/division/{id}', [DivisionPortalController::class, 'show'])->name('division.portal');

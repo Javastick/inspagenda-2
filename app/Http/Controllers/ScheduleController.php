@@ -18,7 +18,7 @@ class ScheduleController extends Controller
             return response()->json($schedules);
         }
 
-        return view('schedules.index', compact('schedules'));
+        return view('admin.dashboard', compact('schedules'));
     }
 
     /**

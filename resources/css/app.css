@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    /* FullCalendar Premium Styles overrides */
+    .fc {
+        @apply font-sans;
+    }
+
+    .fc-toolbar-title {
+        @apply font-display text-2xl font-bold text-base-content;
+    }
+
+    .fc .fc-button {
+        @apply btn btn-sm btn-outline border-base-300 font-semibold capitalize;
+    }
+
+    .fc .fc-button-active {
+        @apply btn-primary text-primary-content border-primary;
+    }
+
+    .fc-col-header-cell {
+        @apply bg-base-200 py-2 font-semibold text-sm uppercase tracking-wide text-base-content/70 border-base-300;
+    }
+
+    .fc-day {
+        @apply border-base-300;
+    }
+
+    .fc-day-today {
+        @apply bg-primary/5;
+    }
+
+    .fc-event {
+        @apply rounded-md px-2 py-1 text-xs font-medium cursor-pointer border border-transparent shadow-sm transition-transform duration-150 hover:scale-105;
+    }
+
+    /* Event Gray (Past) */
+    .fc-event.event-past {
+        @apply bg-slate-100 border-l-4 border-l-slate-500 text-slate-500;
+    }
+
+    /* Event Green (Today) */
+    .fc-event.event-today {
+        @apply bg-emerald-100 border-l-4 border-l-emerald-500 text-emerald-700 font-bold;
+    }
+
+    /* Event Yellow (Future) */
+    .fc-event.event-future {
+        @apply bg-amber-100 border-l-4 border-l-amber-500 text-amber-700;
+    }
+}
