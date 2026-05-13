@@ -50,7 +50,7 @@ class DivisionPortalController extends Controller
             ]);
         }
 
-        return view('divisions.portal', [
+        return view('portal.division', [
             'division' => $division,
             'schedules' => $schedules,
             'currentMonthName' => Carbon::now()->isoFormat('MMMM YYYY')
