@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Status Colors for FullCalendar Events */
 .fc-event-past {
     background-color: #94a3b8 !important; /* Gray */
