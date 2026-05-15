@@ -24,8 +24,21 @@ class CalendarController extends Controller
 
         $schedules = $query->get();
 
+        $now = now()->startOfDay();
+
         // Format data into standard FullCalendar event structure
-        $events = $schedules->map(function ($schedule) {
+        $events = $schedules->map(function ($schedule) use ($now) {
+            $eventDate = $schedule->hari ? $schedule->hari->startOfDay() : null;
+            $className = 'fc-event-future'; // Default
+
+            if ($eventDate) {
+                if ($eventDate->lt($now)) {
+                    $className = 'fc-event-past';
+                } elseif ($eventDate->eq($now)) {
+                    $className = 'fc-event-today';
+                }
+            }
+
             return [
                 'id' => $schedule->id,
                 'title' => $schedule->kegiatan,
@@ -37,7 +50,8 @@ class CalendarController extends Controller
                 'division' => $schedule->division ? $schedule->division->name : null,
                 'auditors' => $schedule->auditors->pluck('name'),
                 'status_pelaksanaan' => $schedule->status_pelaksanaan,
-                'allDay' => false
+                'allDay' => false,
+                'className' => $className
             ];
         });
 
