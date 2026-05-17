@@ -2,34 +2,64 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DivisionPortalController;
+use App\Http\Controllers\ScheduleController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
+// =============================================
+// Public Routes (No Login Required)
+// =============================================
+
+// Landing page
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
+// Global public calendar
+Route::get('/home', function () {
+    return view('home');
+})->name('calendar');
+
+// Division portals (per Irban)
+Route::get('/division/{id}', [DivisionPortalController::class, 'show'])->name('division.portal');
+
+// Public schedule detail
+Route::get('/jadwal/{id}', [ScheduleController::class, 'show'])->name('jadwal.show');
+
+// =============================================
 // Authentication Routes
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+// =============================================
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Secret Admin Registration Route
-Route::match(['get', 'post'], '/register-admin-secret', [AuthController::class, 'registerAdminSecret']);
+// Hidden admin registration
+Route::match(['get', 'post'], '/register-admin-secret', [AuthController::class, 'registerAdminSecret'])
+    ->name('register.secret');
 
-// Schedule CRUD Routes
-Route::resource('schedules', ScheduleController::class);
+// =============================================
+// Protected Admin Routes (Middleware: auth)
+// =============================================
 
-// Division Portal Route
-Route::get('/division/{id}', [DivisionPortalController::class, 'show'])->name('division.portal');
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard (list all schedules)
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Create new surat
+    Route::get('/surat/create', [AdminController::class, 'create'])->name('surat.create');
+    Route::post('/surat', [AdminController::class, 'store'])->name('surat.store');
+
+    // Edit surat
+    Route::get('/surat/{id}/edit', [AdminController::class, 'edit'])->name('surat.edit');
+    Route::put('/surat/{id}', [AdminController::class, 'update'])->name('surat.update');
+
+    // Delete surat
+    Route::delete('/surat/{id}', [AdminController::class, 'destroy'])->name('surat.destroy');
+});

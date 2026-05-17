@@ -37,7 +37,7 @@ class AuthController extends Controller
                 ]);
             }
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         if ($request->wantsJson()) {

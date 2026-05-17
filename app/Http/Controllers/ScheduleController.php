@@ -67,7 +67,7 @@ class ScheduleController extends Controller
             return response()->json($schedule);
         }
 
-        return view('schedules.show', compact('schedule'));
+        return view('jadwal.show', compact('schedule'));
     }
 
     /**
