@@ -9,7 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('auditors', function (Blueprint $table) {
-            $table->dropColumn('status');
+            if (Schema::hasColumn('auditors', 'status')) {
+                $table->dropColumn('status');
+            }
         });
     }
 
@@ -19,7 +21,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('auditors', function (Blueprint $table) {
-            $table->string('status')->default('active');
+            if (!Schema::hasColumn('auditors', 'status')) {
+                $table->string('status')->default('active');
+            }
         });
     }
 };
