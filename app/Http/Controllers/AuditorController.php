@@ -25,7 +25,6 @@ class AuditorController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'division_id' => 'required|exists:divisions,id',
-            'status'      => 'required|in:active,inactive',
         ]);
 
         $auditor = Auditor::create($validated);
@@ -48,7 +47,6 @@ class AuditorController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'division_id' => 'required|exists:divisions,id',
-            'status'      => 'required|in:active,inactive',
         ]);
 
         $auditor->update($validated);

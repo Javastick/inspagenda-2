@@ -164,12 +164,11 @@
                                 <th class="text-xs">Nama Auditor</th>
                                 <th class="text-xs">Divisi (Irban)</th>
                                 <th class="text-xs text-center">Total Penugasan</th>
-                                <th class="text-xs">Status</th>
                                 <th class="text-xs text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="auditor-list">
-                            <tr><td colspan="6" class="text-center py-4 text-base-content/50">Memuat data auditor...</td></tr>
+                            <tr><td colspan="5" class="text-center py-4 text-base-content/50">Memuat data auditor...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -199,13 +198,7 @@
                     </select>
                 </div>
 
-                <div class="form-control mb-5">
-                    <label class="label"><span class="label-text">Status</span></label>
-                    <select id="auditor_status" name="status" class="select select-bordered w-full" required>
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Nonaktif</option>
-                    </select>
-                </div>
+
 
                 <div class="modal-action">
                     <button type="button" class="btn" onclick="document.getElementById('auditorModal').close()">Batal</button>
@@ -231,7 +224,7 @@
                 renderAuditors();
             } catch (error) {
                 console.error('Failed to load auditors', error);
-                document.getElementById('auditor-list').innerHTML = '<tr><td colspan="6" class="text-center py-4 text-error">Gagal memuat data auditor.</td></tr>';
+                document.getElementById('auditor-list').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-error">Gagal memuat data auditor.</td></tr>';
             }
         }
 
@@ -248,7 +241,7 @@
             });
             
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-base-content/50">Data tidak ditemukan.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-base-content/50">Data tidak ditemukan.</td></tr>';
                 return;
             }
 
@@ -260,16 +253,11 @@
                         <span class="badge badge-outline badge-sm">${a.division ? a.division.name : '-'}</span>
                     </td>
                     <td class="text-center">
-                        <div class="badge badge-primary badge-sm font-semibold">${a.invite_mails_count || 0}</div>
-                    </td>
-                    <td>
-                        <span class="badge ${a.status === 'active' ? 'badge-success' : 'badge-ghost'} badge-sm">
-                            ${a.status === 'active' ? 'Aktif' : 'Nonaktif'}
-                        </span>
+                        <div class="">${a.invite_mails_count || 0}</div>
                     </td>
                     <td class="text-right">
                         <div class="flex items-center justify-end gap-1">
-                            <button onclick="editAuditor(${a.id}, '${a.name.replace(/'/g, "\\'")}', ${a.division_id}, '${a.status}')" class="btn btn-ghost btn-xs text-info" title="Edit">
+                            <button onclick="editAuditor(${a.id}, '${a.name.replace(/'/g, "\\'")}', ${a.division_id})" class="btn btn-ghost btn-xs text-info" title="Edit">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                             </button>
                             <button onclick="deleteAuditor(${a.id})" class="btn btn-ghost btn-xs text-error" title="Hapus">
@@ -301,18 +289,16 @@
             document.getElementById('auditor_id').value = '';
             document.getElementById('auditor_name').value = '';
             document.getElementById('auditor_division_id').value = '';
-            document.getElementById('auditor_status').value = 'active';
             
             document.getElementById('auditorModalTitle').innerText = 'Tambah Auditor';
             document.getElementById('auditorModal').showModal();
         }
 
         // Open modal for Edit
-        function editAuditor(id, name, divisionId, status) {
+        function editAuditor(id, name, divisionId) {
             document.getElementById('auditor_id').value = id;
             document.getElementById('auditor_name').value = name;
             document.getElementById('auditor_division_id').value = divisionId;
-            document.getElementById('auditor_status').value = status;
             
             document.getElementById('auditorModalTitle').innerText = 'Edit Auditor';
             document.getElementById('auditorModal').showModal();
@@ -329,7 +315,6 @@
             const data = {
                 name: document.getElementById('auditor_name').value,
                 division_id: document.getElementById('auditor_division_id').value,
-                status: document.getElementById('auditor_status').value,
                 _token: csrfToken
             };
 

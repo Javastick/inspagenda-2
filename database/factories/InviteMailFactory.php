@@ -9,7 +9,7 @@ class InviteMailFactory extends Factory
 {
     public function definition(): array
     {
-        $masuk = $this->faker->dateTimeBetween('-1 month', '+1 month');
+        $masuk = $this->faker->dateTimeBetween('-1 month','now');
         $hari  = $this->faker->dateTimeBetween('-1 month', '+1 month');
         $division_id = $this->faker->randomElement([0, 1, 2, 3, 4]);
         if($division_id === 0){

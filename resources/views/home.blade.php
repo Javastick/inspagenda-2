@@ -26,16 +26,20 @@
                 ->whereNull('division_id')
                 ->whereNotNull('hari')
                 ->where('hari', '>=', now()->startOfDay())
-                ->where('hari', '<=', now()->addDays(2)->endOfDay())
                 ->orderBy('hari')
                 ->get();
         @endphp
-        <x-schedule-list :schedules="$schedules" />
-        <!-- Calendar Widget — home mode: only shows schedules without division (division_id IS NULL) -->
-        <x-calendar-widget mode="home" />
 
-        <!-- Schedule List (Today & Next 2 Days) — only schedules without division -->
-
-        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Left Column: Schedule List -->
+            <div class="lg:col-span-5 space-y-6">
+                <x-schedule-list :schedules="$schedules" />
+            </div>
+            
+            <!-- Right Column: Calendar Widget -->
+            <div class="lg:col-span-7">
+                <x-calendar-widget mode="home" />
+            </div>
+        </div>
     </div>
 </x-layout.app>
