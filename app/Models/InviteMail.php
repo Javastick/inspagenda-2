@@ -21,7 +21,6 @@ class InviteMail extends Model
         'tempat',
         'keterangan',
         'division_id',
-        'status_pelaksanaan'
     ];
 
     protected $casts = [
