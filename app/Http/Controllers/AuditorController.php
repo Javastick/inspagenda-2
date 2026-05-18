@@ -13,7 +13,7 @@ class AuditorController extends Controller
      */
     public function index()
     {
-        $auditors = Auditor::with('division')->orderBy('division_id')->orderBy('name')->get();
+        $auditors = Auditor::with('division')->withCount('inviteMails')->orderBy('division_id')->orderBy('name')->get();
         return response()->json($auditors);
     }
 

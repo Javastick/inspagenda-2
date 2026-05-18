@@ -44,11 +44,21 @@
             </div>
         @endif
 
-        <!-- Arsip Surat Table -->
-        <div class="card bg-base-100 shadow-sm border border-base-200">
-            <div class="card-body p-0 md:p-2">
-                <div class="px-4 pt-4 pb-2">
+        <!-- Tabs Layout -->
+        <div role="tablist" class="tabs tabs-lifted mt-2">
+            
+            <!-- Tab 1: Arsip Surat -->
+            <input type="radio" name="dashboard_tabs" role="tab" class="tab font-semibold" aria-label="Surat Undangan" checked="checked" />
+            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-4 md:p-6 shadow-sm mt-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                     <h2 class="card-title text-lg">Daftar Surat Undangan & Jadwal</h2>
+                    <!-- Search Input -->
+                    <div class="join w-full sm:w-auto">
+                        <input type="text" id="surat-search" placeholder="Cari surat..." class="input input-sm input-bordered join-item w-full sm:w-64" onkeyup="filterSurat()" />
+                        <button class="btn btn-sm btn-ghost join-item pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="table table-zebra w-full">
@@ -65,9 +75,9 @@
                                 <th class="text-xs">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="surat-list">
                             @forelse($schedules as $i => $schedule)
-                                <tr class="hover">
+                                <tr class="hover surat-row">
                                     <td class="text-xs text-base-content/50">{{ $i + 1 }}</td>
                                     <td>
                                         @if($schedule->status_badge === 'past')
@@ -125,17 +135,26 @@
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Manajemen Auditor Section -->
-        <div class="card bg-base-100 shadow-sm border border-base-200">
-            <div class="card-body">
-                <div class="flex justify-between items-center mb-4">
+            <!-- Tab 2: Manajemen Auditor -->
+            <input type="radio" name="dashboard_tabs" role="tab" class="tab font-semibold" aria-label="Manajemen Auditor" />
+            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-4 md:p-6 shadow-sm mt-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                     <h2 class="card-title text-lg">Manajemen Auditor</h2>
-                    <button class="btn btn-sm btn-primary" onclick="openAuditorModal()">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                        Tambah Auditor
-                    </button>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <!-- Filter & Search -->
+                        <select id="auditor-filter" class="select select-sm select-bordered" onchange="renderAuditors()">
+                            <option value="">Semua Divisi</option>
+                            @foreach($divisions as $div)
+                                <option value="{{ $div->id }}">{{ $div->name }}</option>
+                            @endforeach
+                        </select>
+                        <input type="text" id="auditor-search" placeholder="Cari auditor..." class="input input-sm input-bordered w-full sm:w-48" onkeyup="renderAuditors()" />
+                        <button class="btn btn-sm btn-primary shrink-0" onclick="openAuditorModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            Tambah
+                        </button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="table table-zebra w-full" id="auditor-table">
@@ -144,12 +163,13 @@
                                 <th class="text-xs">#</th>
                                 <th class="text-xs">Nama Auditor</th>
                                 <th class="text-xs">Divisi (Irban)</th>
+                                <th class="text-xs text-center">Total Penugasan</th>
                                 <th class="text-xs">Status</th>
                                 <th class="text-xs text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="auditor-list">
-                            <tr><td colspan="5" class="text-center py-4 text-base-content/50">Memuat data auditor...</td></tr>
+                            <tr><td colspan="6" class="text-center py-4 text-base-content/50">Memuat data auditor...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -201,48 +221,79 @@
     @push('scripts')
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        
-        // Fetch and render auditors
+        let allAuditors = [];
+
+        // Fetch auditors
         async function loadAuditors() {
             try {
                 const response = await fetch('/admin/auditors');
-                const auditors = await response.json();
-                
-                const tbody = document.getElementById('auditor-list');
-                
-                if (auditors.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-base-content/50">Belum ada auditor terdaftar.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = auditors.map((a, i) => `
-                    <tr>
-                        <td class="text-xs text-base-content/50">${i + 1}</td>
-                        <td class="font-medium text-sm">${a.name}</td>
-                        <td class="text-sm">
-                            <span class="badge badge-outline badge-sm">${a.division ? a.division.name : '-'}</span>
-                        </td>
-                        <td>
-                            <span class="badge ${a.status === 'active' ? 'badge-success' : 'badge-ghost'} badge-sm">
-                                ${a.status === 'active' ? 'Aktif' : 'Nonaktif'}
-                            </span>
-                        </td>
-                        <td class="text-right">
-                            <div class="flex items-center justify-end gap-1">
-                                <button onclick="editAuditor(${a.id}, '${a.name.replace(/'/g, "\\'")}', ${a.division_id}, '${a.status}')" class="btn btn-ghost btn-xs text-info" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                </button>
-                                <button onclick="deleteAuditor(${a.id})" class="btn btn-ghost btn-xs text-error" title="Hapus">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
+                allAuditors = await response.json();
+                renderAuditors();
             } catch (error) {
                 console.error('Failed to load auditors', error);
-                document.getElementById('auditor-list').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-error">Gagal memuat data auditor.</td></tr>';
+                document.getElementById('auditor-list').innerHTML = '<tr><td colspan="6" class="text-center py-4 text-error">Gagal memuat data auditor.</td></tr>';
             }
+        }
+
+        // Render filtered auditors
+        function renderAuditors() {
+            const tbody = document.getElementById('auditor-list');
+            const search = document.getElementById('auditor-search').value.toLowerCase();
+            const filterDivId = document.getElementById('auditor-filter').value;
+            
+            const filtered = allAuditors.filter(a => {
+                const matchSearch = a.name.toLowerCase().includes(search);
+                const matchDiv = filterDivId === '' || a.division_id == filterDivId;
+                return matchSearch && matchDiv;
+            });
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-base-content/50">Data tidak ditemukan.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((a, i) => `
+                <tr>
+                    <td class="text-xs text-base-content/50">${i + 1}</td>
+                    <td class="font-medium text-sm">${a.name}</td>
+                    <td class="text-sm">
+                        <span class="badge badge-outline badge-sm">${a.division ? a.division.name : '-'}</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="badge badge-primary badge-sm font-semibold">${a.invite_mails_count || 0}</div>
+                    </td>
+                    <td>
+                        <span class="badge ${a.status === 'active' ? 'badge-success' : 'badge-ghost'} badge-sm">
+                            ${a.status === 'active' ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <button onclick="editAuditor(${a.id}, '${a.name.replace(/'/g, "\\'")}', ${a.division_id}, '${a.status}')" class="btn btn-ghost btn-xs text-info" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            </button>
+                            <button onclick="deleteAuditor(${a.id})" class="btn btn-ghost btn-xs text-error" title="Hapus">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search Surat
+        function filterSurat() {
+            const input = document.getElementById('surat-search').value.toLowerCase();
+            const rows = document.querySelectorAll('.surat-row');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         }
 
         // Open modal for Create
