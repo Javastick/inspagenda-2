@@ -40,23 +40,23 @@ class DatabaseSeeder extends Seeder
             $allAuditors = $allAuditors->merge($auditors);
         }
 
-        // 4. Create 200 InviteMail records
-        // $inviteMails = InviteMail::factory(200)->create();
+        // 4. Create InviteMail records
+        $inviteMails = InviteMail::factory(100)->create();
 
         // 5. Attach auditors to invite_mails via pivot table (random, 1-3 auditors per mail)
-        // foreach ($inviteMails as $inviteMail) {
-        //     // Only use auditors from the same division if division_id is set
-        //     if ($inviteMail->division_id) {
-        //         $candidates = Auditor::where('division_id', $inviteMail->division_id)
-        //             ->inRandomOrder()
-        //             ->take(rand(1, 3))
-        //             ->pluck('id')
-        //             ->toArray();
-        //     } else {
-        //         $candidates = $allAuditors->random(rand(1, 3))->pluck('id')->toArray();
-        //     }
+        foreach ($inviteMails as $inviteMail) {
+            // Only use auditors from the same division if division_id is set
+            if ($inviteMail->division_id) {
+                $candidates = Auditor::where('division_id', $inviteMail->division_id)
+                    ->inRandomOrder()
+                    ->take(rand(1, 3))
+                    ->pluck('id')
+                    ->toArray();
+            } else {
+                $candidates = $allAuditors->random(rand(1, 3))->pluck('id')->toArray();
+            }
 
-        //     $inviteMail->auditors()->sync($candidates);
-        // }
+            $inviteMail->auditors()->sync($candidates);
+        }
     }
 }

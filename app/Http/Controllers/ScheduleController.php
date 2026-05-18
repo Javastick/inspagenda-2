@@ -27,16 +27,15 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'sender' => 'required|string|max:255',
-            'masuk' => 'required|date',
-            'hari' => 'required|date',
-            'kegiatan' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'keterangan' => 'nullable|string',
-            'division_id' => 'nullable|exists:divisions,id',
-            'status_pelaksanaan' => 'nullable|string|max:255',
-            'auditor_ids' => 'nullable|array',
-            'auditor_ids.*' => 'exists:auditors,id'
+            'sender'        => 'required|string|max:255',
+            'masuk'         => 'required|date',
+            'hari'          => 'required|date',
+            'kegiatan'      => 'required|string|max:255',
+            'tempat'        => 'required|string|max:255',
+            'keterangan'    => 'nullable|string',
+            'division_id'   => 'nullable|exists:divisions,id',
+            'auditor_ids'   => 'nullable|array',
+            'auditor_ids.*' => 'exists:auditors,id',
         ]);
 
         $inviteMail = InviteMail::create($validated);
@@ -78,16 +77,15 @@ class ScheduleController extends Controller
         $schedule = InviteMail::findOrFail($id);
 
         $validated = $request->validate([
-            'sender' => 'sometimes|required|string|max:255',
-            'masuk' => 'sometimes|required|date',
-            'hari' => 'sometimes|required',
-            'kegiatan' => 'sometimes|required|string|max:255',
-            'tempat' => 'sometimes|required|string|max:255',
-            'keterangan' => 'nullable|string',
-            'division_id' => 'nullable|exists:divisions,id',
-            'status_pelaksanaan' => 'nullable|string|max:255',
-            'auditor_ids' => 'nullable|array',
-            'auditor_ids.*' => 'exists:auditors,id'
+            'sender'        => 'sometimes|required|string|max:255',
+            'masuk'         => 'sometimes|required|date',
+            'hari'          => 'sometimes|required',
+            'kegiatan'      => 'sometimes|required|string|max:255',
+            'tempat'        => 'sometimes|required|string|max:255',
+            'keterangan'    => 'nullable|string',
+            'division_id'   => 'nullable|exists:divisions,id',
+            'auditor_ids'   => 'nullable|array',
+            'auditor_ids.*' => 'exists:auditors,id',
         ]);
 
         $schedule->update($validated);

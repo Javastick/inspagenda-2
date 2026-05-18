@@ -3,8 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuditorController;
 use App\Http\Controllers\DivisionPortalController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\Api\CalendarController;
+use App\Http\Controllers\Api\DivisionCalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +24,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Global public calendar
+// Global public calendar page
 Route::get('/home', function () {
     return view('home');
 })->name('calendar');
@@ -31,6 +34,16 @@ Route::get('/division/{id}', [DivisionPortalController::class, 'show'])->name('d
 
 // Public schedule detail
 Route::get('/jadwal/{id}', [ScheduleController::class, 'show'])->name('jadwal.show');
+
+// =============================================
+// Public API Routes (Calendar Data)
+// =============================================
+
+// Calendar API for Home page — only schedules with no division (division_id IS NULL)
+Route::get('/api/calendar', [CalendarController::class, 'index'])->name('api.calendar');
+
+// Calendar API for Division Portal — only schedules belonging to the given division
+Route::get('/api/calendar/division/{id}', [DivisionCalendarController::class, 'index'])->name('api.calendar.division');
 
 // =============================================
 // Authentication Routes
@@ -62,4 +75,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Delete surat
     Route::delete('/surat/{id}', [AdminController::class, 'destroy'])->name('surat.destroy');
+
+    // ---- Auditor CRUD (JSON/AJAX) ----
+    Route::get('/auditors', [AuditorController::class, 'index'])->name('auditors.index');
+    Route::post('/auditors', [AuditorController::class, 'store'])->name('auditors.store');
+    Route::put('/auditors/{id}', [AuditorController::class, 'update'])->name('auditors.update');
+    Route::delete('/auditors/{id}', [AuditorController::class, 'destroy'])->name('auditors.destroy');
 });

@@ -44,11 +44,11 @@
                 <div class="flex flex-col lg:flex-row items-center gap-16">
                     <!-- Hero Text -->
                     <div class="flex-1 text-center lg:text-left">
-                        <div class="badge badge-outline badge-warning mb-4 font-medium">Sistem Informasi Inspektorat</div>
+                        <div class="badge badge-outline badge-warning mb-4 font-medium">INSPAGENDA</div>
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-                            Kelola Jadwal <br class="hidden md:block">
-                            <span class="text-primary">Pemeriksaan</span><br class="hidden md:block">
-                            Lebih Efisien
+                            Inspektorat Daerah Kabupaten <br class="hidden md:block">
+                            <span class="text-primary">Brebes</span><br class="hidden md:block">
+                            
                         </h1>
                         <p class="text-base-content/70 text-lg md:text-xl max-w-xl mx-auto lg:mx-0 mb-10">
                             Platform terpusat untuk pengelolaan, penjadwalan, dan pemerataan tugas auditor Inspektorat secara transparan dan terstruktur.
@@ -106,7 +106,7 @@
         </section>
 
         <!-- Stats Bar -->
-        <section class="bg-base-200 border-t border-base-300">
+        <!-- <section class="bg-base-200 border-t border-base-300">
             <div class="container mx-auto px-4 py-8">
                 <div class="stats stats-vertical md:stats-horizontal shadow w-full bg-base-100">
                     <div class="stat">
@@ -135,13 +135,13 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
     </main>
 
     <!-- Footer -->
     <footer class="footer footer-center p-6 bg-base-100 border-t border-base-200 text-base-content/60">
         <aside>
-            <p>Copyright © {{ date('Y') }} · <strong>Inspagenda</strong> · Sistem Informasi Jadwal Pemeriksaan Inspektorat</p>
+            <p>Copyright © {{ date('Y') }} · <strong>Inspagenda</strong> · Inspektorat Daerah Kabupaten Brebes</p>
         </aside>
     </footer>
 

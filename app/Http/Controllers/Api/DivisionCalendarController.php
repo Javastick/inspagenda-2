@@ -7,16 +7,16 @@ use App\Models\InviteMail;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class CalendarController extends Controller
+class DivisionCalendarController extends Controller
 {
     /**
-     * Return JSON calendar events for the PUBLIC home page.
-     * Only schedules NOT assigned to any division (division_id IS NULL) are returned.
+     * Return JSON calendar events for a specific division portal.
+     * Only schedules assigned to the given division_id are returned.
      */
-    public function index(Request $request)
+    public function index(Request $request, $divisionId)
     {
-        // Only fetch schedules with no division assigned (public/global schedules)
-        $query = InviteMail::with(['auditors'])->whereNull('division_id');
+        $query = InviteMail::with(['auditors'])
+            ->where('division_id', $divisionId);
 
         // Optional filtering by month and year
         if ($request->has('month') && $request->has('year')) {
@@ -52,6 +52,7 @@ class CalendarController extends Controller
                 'location'    => $schedule->tempat,
                 'sender'      => $schedule->sender,
                 'description' => $schedule->keterangan,
+                'auditors'    => $schedule->auditors->pluck('name'),
                 'status'      => $statusLabel,
                 'allDay'      => false,
                 'className'   => $className,

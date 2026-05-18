@@ -12,7 +12,6 @@ class AuditorFactory extends Factory
         return [
             'division_id' => Division::inRandomOrder()->first()?->id ?? 1,
             'name'        => $this->faker->name(),
-            'status'      => $this->faker->randomElement(['aktif', 'aktif', 'aktif', 'non-aktif']),
         ];
     }
 }

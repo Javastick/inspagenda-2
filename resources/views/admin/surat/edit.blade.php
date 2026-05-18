@@ -80,18 +80,6 @@
                             </div>
                         </div>
 
-                        <!-- Status -->
-                        <div class="form-control">
-                            <label class="label" for="status_pelaksanaan"><span class="label-text font-medium">Status Pelaksanaan</span></label>
-                            <select id="status_pelaksanaan" name="status_pelaksanaan" class="select select-bordered w-full">
-                                @foreach(['Pending', 'Dalam Proses', 'Selesai', 'Dibatalkan'] as $status)
-                                    <option value="{{ $status }}" {{ old('status_pelaksanaan', $schedule->status_pelaksanaan) === $status ? 'selected' : '' }}>
-                                        {{ $status }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
                         <!-- Keterangan -->
                         <div class="form-control md:col-span-2">
                             <label class="label" for="keterangan"><span class="label-text font-medium">Keterangan Tambahan</span></label>

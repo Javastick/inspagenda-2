@@ -47,6 +47,9 @@
         <!-- Arsip Surat Table -->
         <div class="card bg-base-100 shadow-sm border border-base-200">
             <div class="card-body p-0 md:p-2">
+                <div class="px-4 pt-4 pb-2">
+                    <h2 class="card-title text-lg">Daftar Surat Undangan & Jadwal</h2>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="table table-zebra w-full">
                         <thead class="bg-base-200">
@@ -123,5 +126,216 @@
                 </div>
             </div>
         </div>
+
+        <!-- Manajemen Auditor Section -->
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+            <div class="card-body">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="card-title text-lg">Manajemen Auditor</h2>
+                    <button class="btn btn-sm btn-primary" onclick="openAuditorModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Tambah Auditor
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full" id="auditor-table">
+                        <thead class="bg-base-200">
+                            <tr>
+                                <th class="text-xs">#</th>
+                                <th class="text-xs">Nama Auditor</th>
+                                <th class="text-xs">Divisi (Irban)</th>
+                                <th class="text-xs">Status</th>
+                                <th class="text-xs text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditor-list">
+                            <tr><td colspan="5" class="text-center py-4 text-base-content/50">Memuat data auditor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Modal Form Auditor -->
+    <dialog id="auditorModal" class="modal">
+        <div class="modal-box">
+            <h3 id="auditorModalTitle" class="font-bold text-lg mb-4">Tambah Auditor</h3>
+            <form id="auditorForm" onsubmit="saveAuditor(event)">
+                <input type="hidden" id="auditor_id" name="id">
+                
+                <div class="form-control mb-3">
+                    <label class="label"><span class="label-text">Nama Auditor</span></label>
+                    <input type="text" id="auditor_name" name="name" class="input input-bordered w-full" required>
+                </div>
+
+                <div class="form-control mb-3">
+                    <label class="label"><span class="label-text">Divisi (Irban)</span></label>
+                    <select id="auditor_division_id" name="division_id" class="select select-bordered w-full" required>
+                        <option value="" disabled selected>Pilih Divisi...</option>
+                        @foreach($divisions as $div)
+                            <option value="{{ $div->id }}">{{ $div->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-control mb-5">
+                    <label class="label"><span class="label-text">Status</span></label>
+                    <select id="auditor_status" name="status" class="select select-bordered w-full" required>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Nonaktif</option>
+                    </select>
+                </div>
+
+                <div class="modal-action">
+                    <button type="button" class="btn" onclick="document.getElementById('auditorModal').close()">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveAuditor">Simpan</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    @push('scripts')
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        
+        // Fetch and render auditors
+        async function loadAuditors() {
+            try {
+                const response = await fetch('/admin/auditors');
+                const auditors = await response.json();
+                
+                const tbody = document.getElementById('auditor-list');
+                
+                if (auditors.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-base-content/50">Belum ada auditor terdaftar.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = auditors.map((a, i) => `
+                    <tr>
+                        <td class="text-xs text-base-content/50">${i + 1}</td>
+                        <td class="font-medium text-sm">${a.name}</td>
+                        <td class="text-sm">
+                            <span class="badge badge-outline badge-sm">${a.division ? a.division.name : '-'}</span>
+                        </td>
+                        <td>
+                            <span class="badge ${a.status === 'active' ? 'badge-success' : 'badge-ghost'} badge-sm">
+                                ${a.status === 'active' ? 'Aktif' : 'Nonaktif'}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="editAuditor(${a.id}, '${a.name.replace(/'/g, "\\'")}', ${a.division_id}, '${a.status}')" class="btn btn-ghost btn-xs text-info" title="Edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                </button>
+                                <button onclick="deleteAuditor(${a.id})" class="btn btn-ghost btn-xs text-error" title="Hapus">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load auditors', error);
+                document.getElementById('auditor-list').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-error">Gagal memuat data auditor.</td></tr>';
+            }
+        }
+
+        // Open modal for Create
+        function openAuditorModal() {
+            document.getElementById('auditor_id').value = '';
+            document.getElementById('auditor_name').value = '';
+            document.getElementById('auditor_division_id').value = '';
+            document.getElementById('auditor_status').value = 'active';
+            
+            document.getElementById('auditorModalTitle').innerText = 'Tambah Auditor';
+            document.getElementById('auditorModal').showModal();
+        }
+
+        // Open modal for Edit
+        function editAuditor(id, name, divisionId, status) {
+            document.getElementById('auditor_id').value = id;
+            document.getElementById('auditor_name').value = name;
+            document.getElementById('auditor_division_id').value = divisionId;
+            document.getElementById('auditor_status').value = status;
+            
+            document.getElementById('auditorModalTitle').innerText = 'Edit Auditor';
+            document.getElementById('auditorModal').showModal();
+        }
+
+        // Save (Create/Update)
+        async function saveAuditor(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveAuditor');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Menyimpan...';
+
+            const id = document.getElementById('auditor_id').value;
+            const data = {
+                name: document.getElementById('auditor_name').value,
+                division_id: document.getElementById('auditor_division_id').value,
+                status: document.getElementById('auditor_status').value,
+                _token: csrfToken
+            };
+
+            const url = id ? `/admin/auditors/${id}` : '/admin/auditors';
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('auditorModal').close();
+                    loadAuditors();
+                } else {
+                    alert(result.message || 'Terjadi kesalahan saat menyimpan data.');
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan jaringan.');
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
+            }
+        }
+
+        // Delete
+        async function deleteAuditor(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus auditor ini?')) return;
+            
+            try {
+                const response = await fetch(`/admin/auditors/${id}`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken 
+                    }
+                });
+                
+                if (response.ok) {
+                    loadAuditors();
+                } else {
+                    const result = await response.json();
+                    alert(result.message || 'Gagal menghapus auditor.');
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan jaringan.');
+                console.error(error);
+            }
+        }
+
+        // Load initially
+        document.addEventListener('DOMContentLoaded', loadAuditors);
+    </script>
+    @endpush
 </x-layout.app>

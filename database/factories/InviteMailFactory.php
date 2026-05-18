@@ -11,9 +11,13 @@ class InviteMailFactory extends Factory
     {
         $masuk = $this->faker->dateTimeBetween('-1 month', '+1 month');
         $hari  = $this->faker->dateTimeBetween('-1 month', '+1 month');
+        $division_id = $this->faker->randomElement([0, 1, 2, 3, 4]);
+        if($division_id === 0){
+            $division_id = null;
+        }
 
         return [
-            'sender'             => $this->faker->company() . ' ' . $this->faker->randomElement(['Kota', 'Kabupaten', 'Provinsi']),
+            'sender'             => $this->faker->randomElement(['Dinas Kesehatan', 'Dinas Pendidikan', 'Dinas Pekerjaan Umum', 'Badan Pengelola Keuangan', 'Dinas Perhubungan', 'Kecamatan', 'Sekretariat Daerah']) . ' ' . $this->faker->randomElement(['Kota', 'Kabupaten']) . ' ' . $this->faker->city(),
             'masuk'              => $masuk,
             'hari'               => $hari,
             'kegiatan'           => $this->faker->randomElement([
@@ -27,8 +31,7 @@ class InviteMailFactory extends Factory
                 'Ruang Inspektur', 'Aula Inspektorat',
             ]),
             'keterangan'         => $this->faker->paragraph(2),
-            'division_id'        => Division::inRandomOrder()->first()?->id,
-            'status_pelaksanaan' => $this->faker->randomElement(['Selesai', 'Pending', 'Dalam Proses', 'Dibatalkan']),
+            'division_id'        => $division_id,
         ];
     }
 }
