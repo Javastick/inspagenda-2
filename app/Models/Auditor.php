@@ -11,7 +11,7 @@ class Auditor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['division_id', 'name', 'status'];
+    protected $fillable = ['division_id', 'name'];
 
     public function division(): BelongsTo
     {

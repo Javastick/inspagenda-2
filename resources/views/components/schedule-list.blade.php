@@ -3,11 +3,11 @@
 @php
     $todaySchedules = $schedules->filter(function ($s) {
         return $s->hari && $s->hari->isToday();
-    });
+    })->sortBy('hari');
     
     $upcomingSchedules = $schedules->filter(function ($s) {
         return $s->hari && $s->hari->isFuture() && !$s->hari->isToday();
-    });
+    })->sortBy('hari')->take(5);
 @endphp
 
 <div class="space-y-6">
@@ -79,7 +79,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($upcomingSchedules->take(5) as $schedule)
+                            @foreach($upcomingSchedules as $schedule)
                                 <tr>
                                     <td class="font-medium whitespace-nowrap">{{ $schedule->hari->format('d M Y') }}</td>
                                     <td>{{ $schedule->kegiatan }}</td>

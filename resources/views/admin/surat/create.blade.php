@@ -20,17 +20,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- Tgl Masuk -->
                         <div class="form-control">
-                            <label class="label" for="masuk"><span class="label-text font-medium">Tanggal Surat Masuk <span class="text-error">*</span></span></label>
-                            <input id="masuk" type="date" name="masuk" value="{{ old('masuk') }}"
-                                   class="input input-bordered w-full @error('masuk') input-error @enderror" required>
+                            <label class="label" for="masuk">
+                                <span class="label-text font-medium">Tanggal Surat Masuk <span class="text-error">*</span></span>
+                                <button type="button" onclick="setCurrentDateTime()" class="label-text-alt btn btn-xs btn-primary btn-outline font-semibold rounded-md">Sekarang</button>
+                            </label>
+                            <input id="masuk" type="datetime-local" name="masuk" value="{{ old('masuk') }}"
+                                   class="input input-bordered w-full @error('masuk') input-error @enderror" placeholder="Tanggal Masuk" required>
                             @error('masuk')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
 
                         <!-- Tgl Kegiatan -->
                         <div class="form-control">
                             <label class="label" for="hari"><span class="label-text font-medium">Tanggal Pelaksanaan <span class="text-error">*</span></span></label>
-                            <input id="hari" type="date" name="hari" value="{{ old('hari') }}"
-                                   class="input input-bordered w-full @error('hari') input-error @enderror" required>
+                            <input id="hari" type="datetime-local" name="hari" value="{{ old('hari') }}"
+                                   class="input input-bordered w-full @error('hari') input-error @enderror" placeholder="Tanggal Pelaksanaan" required>
                             @error('hari')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
 
@@ -106,6 +109,32 @@
 
     @push('scripts')
     <script>
+        let fpMasuk;
+        document.addEventListener('DOMContentLoaded', function() {
+            fpMasuk = flatpickr("#masuk", {
+                enableTime: true,
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                dateFormat: "Y-m-d H:i:s",
+                time_24hr: true,
+                locale: "id"
+            });
+            flatpickr("#hari", {
+                enableTime: true,
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                dateFormat: "Y-m-d H:i:s",
+                time_24hr: true,
+                locale: "id"
+            });
+        });
+
+        function setCurrentDateTime() {
+            if (fpMasuk) {
+                fpMasuk.setDate(new Date());
+            }
+        }
+
         const divisionsData = @json($divisions->map(fn($d) => ['id' => $d->id, 'auditors' => $d->auditors->map(fn($a) => ['id' => $a->id, 'name' => $a->name])]));
         const oldAuditorIds = @json(old('auditor_ids', []));
 

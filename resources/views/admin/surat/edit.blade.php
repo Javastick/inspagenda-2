@@ -38,7 +38,7 @@
                         <!-- Tgl Masuk -->
                         <div class="form-control">
                             <label class="label" for="masuk"><span class="label-text font-medium">Tanggal Surat Masuk <span class="text-error">*</span></span></label>
-                            <input id="masuk" type="date" name="masuk" value="{{ old('masuk', $schedule->masuk?->format('Y-m-d')) }}"
+                            <input id="masuk" type="datetime-local" name="masuk" value="{{ old('masuk', $schedule->masuk?->format('Y-m-d\TH:i')) }}"
                                    class="input input-bordered w-full @error('masuk') input-error @enderror" required>
                             @error('masuk')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -46,7 +46,7 @@
                         <!-- Tgl Kegiatan -->
                         <div class="form-control">
                             <label class="label" for="hari"><span class="label-text font-medium">Tanggal Pelaksanaan <span class="text-error">*</span></span></label>
-                            <input id="hari" type="date" name="hari" value="{{ old('hari', $schedule->hari?->format('Y-m-d')) }}"
+                            <input id="hari" type="datetime-local" name="hari" value="{{ old('hari', $schedule->hari?->format('Y-m-d\TH:i')) }}"
                                    class="input input-bordered w-full @error('hari') input-error @enderror" required>
                             @error('hari')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -103,6 +103,25 @@
 
     @push('scripts')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#masuk", {
+                enableTime: true,
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                dateFormat: "Y-m-d H:i:s",
+                time_24hr: true,
+                locale: "id"
+            });
+            flatpickr("#hari", {
+                enableTime: true,
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                dateFormat: "Y-m-d H:i:s",
+                time_24hr: true,
+                locale: "id"
+            });
+        });
+
         const divisionsData = @json($divisions->map(fn($d) => ['id' => $d->id, 'auditors' => $d->auditors->map(fn($a) => ['id' => $a->id, 'name' => $a->name])]));
         const currentAuditorIds = @json($schedule->auditors->pluck('id'));
 
