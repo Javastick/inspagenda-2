@@ -27,33 +27,30 @@ class DatabaseSeeder extends Seeder
         );
 
         // 2. Create the 4 fixed Divisions (Irban 1-4)
-        $divisionNames = ['Irban 1', 'Irban 2', 'Irban 3', 'Irban 4'];
+        $divisionNames = ['Inspektur', 'Irban 1', 'Irban 2', 'Irban 3', 'Irban 4', 'Irban Khusus', 'Sekretariat'];
         $divisions = [];
         foreach ($divisionNames as $name) {
             $divisions[] = Division::firstOrCreate(['name' => $name]);
         }
 
-        // 3. Create Auditors - strictly one auditor per division (10 per division = 40 total)
-        $allAuditors = collect();
-        foreach ($divisions as $division) {
-            $auditors = Auditor::factory(10)->create(['division_id' => $division->id]);
-            $allAuditors = $allAuditors->merge($auditors);
-        }
+        // 3. Create Auditors - menggunakan jumlah template dari AuditorFactory
+        $templateCount = count(\Database\Factories\AuditorFactory::$defaultAuditors);
+        $allAuditors = Auditor::factory($templateCount)->create();
 
         // 4. Create InviteMail records
         $inviteMails = InviteMail::factory(100)->create();
 
-        // 5. Attach auditors to invite_mails via pivot table (random, 1-3 auditors per mail)
+        // 5. Attach auditors to invite_mails via pivot table
         foreach ($inviteMails as $inviteMail) {
             // Only use auditors from the same division if division_id is set
             if ($inviteMail->division_id) {
                 $candidates = Auditor::where('division_id', $inviteMail->division_id)
                     ->inRandomOrder()
-                    ->take(rand(1, 3))
+                    ->take(rand(1, 4)) // Bisa 1 sampai 4 orang atau lebih
                     ->pluck('id')
                     ->toArray();
             } else {
-                $candidates = $allAuditors->random(rand(1, 3))->pluck('id')->toArray();
+                $candidates = $allAuditors->random(rand(1, 4))->pluck('id')->toArray();
             }
 
             $inviteMail->auditors()->sync($candidates);

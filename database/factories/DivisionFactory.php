@@ -10,7 +10,7 @@ class DivisionFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->randomElement([
-                'Irban 1', 'Irban 2', 'Irban 3', 'Irban 4'
+                'Inspektur', 'Irban 1', 'Irban 2', 'Irban 3', 'Irban 4', 'Irban Khusus', 'Sekretariat'
             ]),
         ];
     }
