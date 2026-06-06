@@ -18,6 +18,22 @@ class AuditorController extends Controller
     }
 
     /**
+     * Display the specified auditor profile.
+     */
+    public function show($id)
+    {
+        $auditor = Auditor::with(['division', 'inviteMails' => function($q) {
+            $q->orderBy('hari', 'desc');
+        }])->findOrFail($id);
+
+        $groupedMails = $auditor->inviteMails->groupBy(function ($mail) {
+            return $mail->hari ? $mail->hari->format('F Y') : 'Unknown Date';
+        });
+
+        return view('auditors.profile', compact('auditor', 'groupedMails'));
+    }
+
+    /**
      * Store a new auditor.
      */
     public function store(Request $request)

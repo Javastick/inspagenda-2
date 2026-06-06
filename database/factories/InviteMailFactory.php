@@ -11,10 +11,7 @@ class InviteMailFactory extends Factory
     {
         $masuk = $this->faker->dateTimeBetween('-1 month','now');
         $hari  = $this->faker->dateTimeBetween('-1 month', '+1 month');
-        $division_id = $this->faker->randomElement([0, 1, 2, 3, 4, 5, 6]);
-        if($division_id === 0){
-            $division_id = null;
-        }
+        $division_id = $this->faker->randomElement([ 1, 2, 3, 4, 5, 6, 7]);
 
         return [
             'sender'             => $this->faker->randomElement(['Dinas Kesehatan', 'Dinas Pendidikan', 'Dinas Pekerjaan Umum', 'Badan Pengelola Keuangan', 'Dinas Perhubungan', 'Kecamatan', 'Sekretariat Daerah']) . ' ' . $this->faker->randomElement(['Kota', 'Kabupaten']) . ' ' . $this->faker->city(),

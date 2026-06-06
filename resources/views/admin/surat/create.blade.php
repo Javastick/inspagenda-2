@@ -131,7 +131,9 @@
 
         function setCurrentDateTime() {
             if (fpMasuk) {
-                fpMasuk.setDate(new Date());
+                let d = new Date();
+                d.setSeconds(0, 0);
+                fpMasuk.setDate(d);
             }
         }
 

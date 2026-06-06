@@ -35,6 +35,14 @@ class AuditorFactory extends Factory
         ['name' => 'Nieken Meiyana, Amd',     'division_id' =>  7], 
         ['name' => 'Agus Suciantoro, A.Md.',     'division_id' => 7], 
 
+        // Inspektur
+        ['name' => 'Sekretariat',      'division_id' => 1], 
+        ['name' => 'Wilayah 1',      'division_id' => 1], 
+        ['name' => 'Wilayah 2',      'division_id' => 1], 
+        ['name' => 'Wilayah 3',      'division_id' => 1], 
+        ['name' => 'Wilayah 4',      'division_id' => 1], 
+        ['name' => 'Wilayah Khusus',      'division_id' => 1], 
+
         //Irban 1
         ['name' => 'Iman Parnoko, S.Ip',      'division_id' => 2], 
         ['name' => 'Hegar Wiratosan, S.Sos',      'division_id' => 2], 

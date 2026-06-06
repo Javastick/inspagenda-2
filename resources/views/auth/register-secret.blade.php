@@ -16,7 +16,7 @@
         <div class="text-center mb-8">
             <img src="{{ asset('images/logo-inspagenda-nobg.png') }}" alt="Logo" class="h-16 w-auto mx-auto mb-3">
             <h1 class="text-2xl font-bold text-base-content">Inspagenda</h1>
-            <p class="text-base-content/60 text-sm mt-1">Registrasi Akun Admin Tersembunyi</p>
+            <p class="text-base-content/60 text-sm mt-1">Registrasi Akun Admin</p>
         </div>
 
         <!-- Register Card -->

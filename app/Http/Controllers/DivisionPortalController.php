@@ -18,8 +18,8 @@ class DivisionPortalController extends Controller
         // 1. Fetch division with auditors and calculate current month's audit count for each auditor
         $division = Division::with(['auditors' => function ($query) {
             $query->withCount(['inviteMails' => function ($q) {
-                $q->whereMonth('masuk', Carbon::now()->month)
-                  ->whereYear('masuk', Carbon::now()->year);
+                $q->whereMonth('hari', Carbon::now()->month)
+                  ->whereYear('hari', Carbon::now()->year);
             }]);
         }])->findOrFail($divisionId);
 

@@ -37,9 +37,17 @@
         // Determine API endpoint based on page context
         const calendarMode    = @json($mode);
         const calendarDivId   = @json($divisionId);
-        const eventsUrl = (calendarMode === 'division' && calendarDivId)
+        let eventsUrl = (calendarMode === 'division' && calendarDivId)
             ? `/api/calendar/division/${calendarDivId}`
             : '/api/calendar';
+
+        if (calendarMode === 'home') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const divisionId = urlParams.get('division');
+            if (divisionId) {
+                eventsUrl += `?division=${divisionId}`;
+            }
+        }
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -68,7 +76,7 @@
                 const auditorRow = (calendarMode === 'division') ? `
                     <div class="grid grid-cols-3 gap-2 border-b pb-2">
                         <span class="font-semibold text-base-content/70">Auditor</span>
-                        <span class="col-span-2">${props.auditors && props.auditors.length > 0 ? props.auditors.join(', ') : 'Belum ditugaskan'}</span>
+                        <span class="col-span-2">${props.auditors && props.auditors.length > 0 ? props.auditors.join(' | ') : 'Belum ditugaskan'}</span>
                     </div>
                 ` : '';
 

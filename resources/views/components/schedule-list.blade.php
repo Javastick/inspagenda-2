@@ -37,7 +37,7 @@
                         </thead>
                         <tbody>
                             @foreach($todaySchedules as $schedule)
-                                <tr>
+                                <tr class="hover cursor-pointer" onclick="window.location='{{ route('jadwal.show', $schedule->id) }}'">
                                     <td class="font-medium">{{ $schedule->hari->format('H:i') }}</td>
                                     <td>{{ $schedule->kegiatan }}</td>
                                     <td>{{ $schedule->tempat }}</td>
@@ -80,7 +80,7 @@
                         </thead>
                         <tbody>
                             @foreach($upcomingSchedules as $schedule)
-                                <tr>
+                                <tr class="hover cursor-pointer" onclick="window.location='{{ route('jadwal.show', $schedule->id) }}'">
                                     <td class="font-medium whitespace-nowrap">{{ $schedule->hari->format('d M Y') }}</td>
                                     <td>{{ $schedule->kegiatan }}</td>
                                     <td>{{ $schedule->tempat }}</td>

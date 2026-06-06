@@ -37,7 +37,10 @@
 
                         <!-- Tgl Masuk -->
                         <div class="form-control">
-                            <label class="label" for="masuk"><span class="label-text font-medium">Tanggal Surat Masuk <span class="text-error">*</span></span></label>
+                            <label class="label" for="masuk">
+                                <span class="label-text font-medium">Tanggal Surat Masuk <span class="text-error">*</span></span>
+                                <button type="button" onclick="setCurrentDateTime()" class="label-text-alt btn btn-xs btn-primary btn-outline font-semibold rounded-md">Sekarang</button>
+                            </label>
                             <input id="masuk" type="datetime-local" name="masuk" value="{{ old('masuk', $schedule->masuk?->format('Y-m-d\TH:i')) }}"
                                    class="input input-bordered w-full @error('masuk') input-error @enderror" required>
                             @error('masuk')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
@@ -103,8 +106,9 @@
 
     @push('scripts')
     <script>
+        let fpMasuk;
         document.addEventListener('DOMContentLoaded', function() {
-            flatpickr("#masuk", {
+            fpMasuk = flatpickr("#masuk", {
                 enableTime: true,
                 altInput: true,
                 altFormat: "d/m/Y H:i",
@@ -121,6 +125,14 @@
                 locale: "id"
             });
         });
+
+        function setCurrentDateTime() {
+            if (fpMasuk) {
+                let d = new Date();
+                d.setSeconds(0, 0);
+                fpMasuk.setDate(d);
+            }
+        }
 
         const divisionsData = @json($divisions->map(fn($d) => ['id' => $d->id, 'auditors' => $d->auditors->map(fn($a) => ['id' => $a->id, 'name' => $a->name])]));
         const currentAuditorIds = @json($schedule->auditors->pluck('id'));

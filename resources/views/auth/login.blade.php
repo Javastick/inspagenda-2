@@ -50,13 +50,24 @@
                                placeholder="contoh@example.com" required autofocus>
                     </div>
 
-                    <div class="form-control">
+                    <div class="form-control relative">
                         <label class="label" for="password">
                             <span class="label-text font-medium">Password</span>
                         </label>
-                        <input id="password" type="password" name="password"
-                               class="input input-bordered w-full @error('password') input-error @enderror"
-                               placeholder="••••••••" required>
+                        <div class="relative">
+                            <input id="password" type="password" name="password"
+                                   class="input input-bordered w-full pr-10 @error('password') input-error @enderror"
+                                   placeholder="••••••••" required>
+                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-base-content">
+                                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eye-slash-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.29 3.29m0 0a9.953 9.953 0 013.85-2.096m1.077-.206c.33-.064.666-.1.996-.1 4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-2.437 3.518" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-control mt-2">
@@ -74,5 +85,22 @@
         </p>
     </div>
 
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        const eyeSlashIcon = document.getElementById('eye-slash-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.add('hidden');
+            eyeSlashIcon.classList.remove('hidden');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('hidden');
+            eyeSlashIcon.classList.add('hidden');
+        }
+    }
+</script>
 </body>
 </html>

@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Create the 4 fixed Divisions (Irban 1-4)
+        // 2. Create the Divisions
         $divisionNames = ['Inspektur', 'Irban 1', 'Irban 2', 'Irban 3', 'Irban 4', 'Irban Khusus', 'Sekretariat'];
         $divisions = [];
         foreach ($divisionNames as $name) {

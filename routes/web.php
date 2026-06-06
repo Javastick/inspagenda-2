@@ -21,7 +21,13 @@ use App\Http\Controllers\Api\DivisionCalendarController;
 
 // Landing page
 Route::get('/', function () {
-    return view('welcome');
+    $totalUnitKerja = \App\Models\Division::count();
+    $totalAgenda = \App\Models\InviteMail::count();
+    $completedAgenda = \App\Models\InviteMail::whereDate('hari', '<', \Carbon\Carbon::today())->count();
+    $oldestDate = \App\Models\InviteMail::min('hari');
+    $sejak = $oldestDate ? \Carbon\Carbon::parse($oldestDate)->year : date('Y');
+
+    return view('welcome', compact('totalUnitKerja', 'totalAgenda', 'completedAgenda', 'sejak'));
 })->name('home');
 
 // Global public calendar page
@@ -34,6 +40,9 @@ Route::get('/division/{id}', [DivisionPortalController::class, 'show'])->name('d
 
 // Public schedule detail
 Route::get('/jadwal/{id}', [ScheduleController::class, 'show'])->name('jadwal.show');
+
+// Public auditor profile
+Route::get('/auditor/{id}', [AuditorController::class, 'show'])->name('auditor.profile');
 
 // =============================================
 // Public API Routes (Calendar Data)

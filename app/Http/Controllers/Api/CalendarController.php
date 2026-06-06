@@ -15,8 +15,11 @@ class CalendarController extends Controller
      */
     public function index(Request $request)
     {
-        // Only fetch schedules with no division assigned (public/global schedules)
-        $query = InviteMail::with(['auditors'])->whereNull('division_id');
+        $query = InviteMail::with(['auditors']);
+
+        if ($request->has('division') && $request->division != '') {
+            $query->where('division_id', $request->division);
+        }
 
         // Optional filtering by month and year
         if ($request->has('month') && $request->has('year')) {

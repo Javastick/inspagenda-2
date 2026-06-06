@@ -18,7 +18,9 @@
                 @foreach($sortedAuditors as $auditor)
                     <div class="flex justify-between items-center p-3 bg-base-200/50 hover:bg-primary/5 rounded-xl border border-base-200 transition-colors">
                         <div class="flex-1 min-w-0">
-                            <span class="text-sm font-semibold text-base-content block truncate">{{ $auditor->name }}</span>
+                            <a href="{{ route('auditor.profile', $auditor->id) }}" class="text-sm font-semibold text-base-content hover:text-primary transition-colors block truncate">
+                                {{ $auditor->name }}
+                            </a>
                             <span class="text-xs text-base-content/60 block mt-0.5">
                                 ditugaskan: <span class="font-medium text-base-content">{{ $auditor->invite_mails_count }} kali</span>
                             </span>

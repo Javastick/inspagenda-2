@@ -6,28 +6,26 @@
                 <h1 class="text-2xl font-bold text-base-content">Kalender Jadwal</h1>
                 <p class="text-base-content/60 text-sm mt-1">Agenda Inspektorat</p>
             </div>
-            <!-- <div class="flex items-center gap-3">
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-neutral-400 inline-block"></span>
-                    <span class="text-xs text-base-content/60">Terlewat</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-success inline-block"></span>
-                    <span class="text-xs text-base-content/60">Hari Ini</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-warning inline-block"></span>
-                    <span class="text-xs text-base-content/60">Mendatang</span>
-                </div>
-            </div> -->
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <select id="division-filter" class="select select-bordered select-sm w-full sm:w-auto" onchange="filterDivision(this.value)">
+                    <option value="">Semua Divisi</option>
+                    @foreach(\App\Models\Division::all() as $div)
+                        <option value="{{ $div->id }}" {{ request('division') == $div->id ? 'selected' : '' }}>{{ $div->name }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
         @php
-            $schedules = \App\Models\InviteMail::with(['division','auditors'])
-                ->whereNull('division_id')
+            $query = \App\Models\InviteMail::with(['division','auditors'])
                 ->whereNotNull('hari')
                 ->where('hari', '>=', now()->startOfDay())
-                ->orderBy('hari')
-                ->get();
+                ->orderBy('hari');
+                
+            if (request()->has('division') && request()->division != '') {
+                $query->where('division_id', request()->division);
+            }
+            
+            $schedules = $query->get();
         @endphp
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -42,4 +40,17 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+    <script>
+        function filterDivision(val) {
+            let url = new URL(window.location.href);
+            if(val) {
+                url.searchParams.set('division', val);
+            } else {
+                url.searchParams.delete('division');
+            }
+            window.location.href = url.toString();
+        }
+    </script>
+    @endpush
 </x-layout.app>
