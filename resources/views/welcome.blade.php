@@ -413,14 +413,27 @@
       <p>Pengawas Penyelenggaraan Pemerintahan Daerah</p>
     </div>
   </div>
-  <div class="header-badge">
-    <a href="{{route ('login')}}" style="color:black">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-      </svg>
-      Login
-    </a>
-  </div>
+<div class="header-badge">
+    @auth
+        {{-- Jika User Sudah Login: Tampilkan menu Dashboard --}}
+        <a href="{{ route('admin.dashboard') }}" style="color:black; display:flex; align-items:center; gap:4px;">
+            {{-- Ikon Dashboard --}}
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Dashboard
+        </a>
+    @else
+        {{-- Jika User Belum Login: Tampilkan menu Login --}}
+        <a href="{{ route('login') }}" style="color:black; display:flex; align-items:center; gap:4px;">
+            {{-- Ikon Login --}}
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            Login
+        </a>
+    @endauth
+</div>
 </header>
 
 <!-- HERO -->
