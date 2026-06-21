@@ -17,14 +17,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Create 1 Admin Account
-        User::firstOrCreate(
-            ['email' => 'admin@inspagenda.test'],
-            [
-                'name'     => 'Super Admin',
-                'password' => Hash::make('password'),
-                'role'     => 'admin',
-            ]
-        );
+        // User::firstOrCreate(
+        //     ['email' => 'admin@inspagenda.test'],
+        //     [
+        //         'name'     => 'Super Admin',
+        //         'password' => Hash::make('password'),
+        //         'role'     => 'admin',
+        //     ]
+        // );
 
         // 2. Create the Divisions
         $divisionNames = ['Inspektur', 'Irban 1', 'Irban 2', 'Irban 3', 'Irban 4', 'Irban Khusus', 'Sekretariat'];
@@ -38,22 +38,22 @@ class DatabaseSeeder extends Seeder
         $allAuditors = Auditor::factory($templateCount)->create();
 
         // 4. Create InviteMail records
-        $inviteMails = InviteMail::factory(100)->create();
+        // $inviteMails = InviteMail::factory(100)->create();
 
         // 5. Attach auditors to invite_mails via pivot table
-        foreach ($inviteMails as $inviteMail) {
-            // Only use auditors from the same division if division_id is set
-            if ($inviteMail->division_id) {
-                $candidates = Auditor::where('division_id', $inviteMail->division_id)
-                    ->inRandomOrder()
-                    ->take(rand(1, 4)) // Bisa 1 sampai 4 orang atau lebih
-                    ->pluck('id')
-                    ->toArray();
-            } else {
-                $candidates = $allAuditors->random(rand(1, 4))->pluck('id')->toArray();
-            }
+        // foreach ($inviteMails as $inviteMail) {
+        //     // Only use auditors from the same division if division_id is set
+        //     if ($inviteMail->division_id) {
+        //         $candidates = Auditor::where('division_id', $inviteMail->division_id)
+        //             ->inRandomOrder()
+        //             ->take(rand(1, 4)) // Bisa 1 sampai 4 orang atau lebih
+        //             ->pluck('id')
+        //             ->toArray();
+        //     } else {
+        //         $candidates = $allAuditors->random(rand(1, 4))->pluck('id')->toArray();
+        //     }
 
-            $inviteMail->auditors()->sync($candidates);
-        }
+        //     $inviteMail->auditors()->sync($candidates);
+        // }
     }
 }
